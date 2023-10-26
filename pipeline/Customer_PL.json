@@ -72,6 +72,11 @@
 									"type": "JsonSource",
 									"storeSettings": {
 										"type": "AzureBlobStorageReadSettings",
+										"recursive": true,
+										"wildcardFileName": {
+											"value": "@item().name",
+											"type": "Expression"
+										},
 										"enablePartitionDiscovery": false
 									},
 									"formatSettings": {
@@ -142,8 +147,14 @@
 									"type": "DatasetReference",
 									"parameters": {
 										"CONTAINER": "rawdatastroe",
-										"FILE_PATH": "2021/01",
-										"FILE_NAME": "customers_2021_01_01.parquet"
+										"FILE_PATH": {
+											"value": "@concat(split(item().name,'_')[0],'/',split(split(item().name,'_')[1],'-')[0],'/',split(split(item().name,'_')[1],'-')[1])",
+											"type": "Expression"
+										},
+										"FILE_NAME": {
+											"value": "@concat(split(item().name,'.')[0],'.parquet')",
+											"type": "Expression"
+										}
 									}
 								}
 							]
