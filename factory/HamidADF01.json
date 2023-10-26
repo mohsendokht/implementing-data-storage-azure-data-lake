@@ -1,0 +1,9 @@
+{
+	"name": "HamidADF01",
+	"location": "uksouth",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "a55aa7d9-305f-4ecc-8d28-8b43c93decb2",
+		"tenantId": "07808216-ca18-4f9b-b249-7d53dadb5344"
+	}
+}
