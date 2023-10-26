@@ -53,7 +53,103 @@
 						"value": "@activity('GetCustJsonFiles').output.childItems",
 						"type": "Expression"
 					},
-					"isSequential": true
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "Copy data1",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "JsonSource",
+									"storeSettings": {
+										"type": "AzureBlobStorageReadSettings",
+										"recursive": true,
+										"enablePartitionDiscovery": false
+									},
+									"formatSettings": {
+										"type": "JsonReadSettings"
+									}
+								},
+								"sink": {
+									"type": "ParquetSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									},
+									"formatSettings": {
+										"type": "ParquetWriteSettings"
+									}
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"mappings": [
+										{
+											"source": {
+												"path": "$['customer_id']"
+											},
+											"sink": {
+												"name": "customer_id"
+											}
+										},
+										{
+											"source": {
+												"path": "$['relationship_manager_id']"
+											},
+											"sink": {
+												"name": "relationship_manager_id"
+											}
+										},
+										{
+											"source": {
+												"path": "$['last_updated']"
+											},
+											"sink": {
+												"name": "last_updated"
+											}
+										},
+										{
+											"source": {
+												"path": "$['deposit_amount']"
+											},
+											"sink": {
+												"name": "deposit_amount"
+											}
+										}
+									]
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "CustomerJson",
+									"type": "DatasetReference",
+									"parameters": {
+										"FILE_NAME": "customer_2021-01-01.json",
+										"CONTAINER": "landingarea"
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "Customer_Parquet_data",
+									"type": "DatasetReference",
+									"parameters": {
+										"CONTAINER": "rawdatastroe",
+										"FILE_PATH": "2021/01",
+										"FILE_NAME": "customers_2021_01_01.parquet"
+									}
+								}
+							]
+						}
+					]
 				}
 			}
 		],
