@@ -1,0 +1,44 @@
+{
+	"name": "Customer_Parquet_data",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_AzureDataLakeStorage_hamidsag2test1",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"CONTAINER": {
+				"type": "string",
+				"defaultValue": "rawdatastroe"
+			},
+			"FILE_PATH": {
+				"type": "string",
+				"defaultValue": "2021/01"
+			},
+			"FILE_NAME": {
+				"type": "string",
+				"defaultValue": "customers_2021_01_01.parquet"
+			}
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@dataset().FILE_NAME",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@dataset().FILE_PATH",
+					"type": "Expression"
+				},
+				"fileSystem": {
+					"value": "@dataset().CONTAINER",
+					"type": "Expression"
+				}
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	}
+}
