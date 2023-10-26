@@ -1,0 +1,32 @@
+{
+	"name": "CustomerJson",
+	"properties": {
+		"description": "Customer Json file",
+		"linkedServiceName": {
+			"referenceName": "LS_AzureBlobStorage_hamidstorageaccount01",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"FILE_NAME": {
+				"type": "string",
+				"defaultValue": "customer_2021-01-01.json"
+			},
+			"CONTAINER": {
+				"type": "string",
+				"defaultValue": "landingarea"
+			}
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"container": {
+					"value": "@dataset().CONTAINER",
+					"type": "Expression"
+				}
+			}
+		},
+		"schema": {}
+	}
+}
