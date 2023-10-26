@@ -168,6 +168,184 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/LS_AzureBlobStorage_hamidstorageaccount01')]"
 			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Customer_PL')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "GetCustJsonFiles",
+						"description": "Get Customer Json Files",
+						"type": "GetMetadata",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "CustomerJson",
+								"type": "DatasetReference",
+								"parameters": {
+									"FILE_NAME": "customer_2021-01-01.json",
+									"CONTAINER": "landingarea"
+								}
+							},
+							"fieldList": [
+								"childItems"
+							],
+							"storeSettings": {
+								"type": "AzureBlobStorageReadSettings",
+								"recursive": true,
+								"enablePartitionDiscovery": false
+							},
+							"formatSettings": {
+								"type": "JsonReadSettings"
+							}
+						}
+					},
+					{
+						"name": "Load JSON Files",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "GetCustJsonFiles",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('GetCustJsonFiles').output.childItems",
+								"type": "Expression"
+							},
+							"isSequential": true,
+							"activities": [
+								{
+									"name": "Copy Files",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "JsonSource",
+											"storeSettings": {
+												"type": "AzureBlobStorageReadSettings",
+												"recursive": true,
+												"wildcardFileName": {
+													"value": "@item().name",
+													"type": "Expression"
+												},
+												"enablePartitionDiscovery": false
+											},
+											"formatSettings": {
+												"type": "JsonReadSettings"
+											}
+										},
+										"sink": {
+											"type": "ParquetSink",
+											"storeSettings": {
+												"type": "AzureBlobFSWriteSettings"
+											},
+											"formatSettings": {
+												"type": "ParquetWriteSettings"
+											}
+										},
+										"enableStaging": false,
+										"translator": {
+											"type": "TabularTranslator",
+											"mappings": [
+												{
+													"source": {
+														"path": "$['customer_id']"
+													},
+													"sink": {
+														"name": "customer_id"
+													}
+												},
+												{
+													"source": {
+														"path": "$['relationship_manager_id']"
+													},
+													"sink": {
+														"name": "relationship_manager_id"
+													}
+												},
+												{
+													"source": {
+														"path": "$['last_updated']"
+													},
+													"sink": {
+														"name": "last_updated"
+													}
+												},
+												{
+													"source": {
+														"path": "$['deposit_amount']"
+													},
+													"sink": {
+														"name": "deposit_amount"
+													}
+												}
+											]
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "CustomerJson",
+											"type": "DatasetReference",
+											"parameters": {
+												"FILE_NAME": "customer_2021-01-01.json",
+												"CONTAINER": "landingarea"
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "Customer_Parquet_data",
+											"type": "DatasetReference",
+											"parameters": {
+												"CONTAINER": "rawdatastroe",
+												"FILE_PATH": {
+													"value": "@concat(split(item().name,'_')[0],'/',split(split(item().name,'_')[1],'-')[0],'/',split(split(item().name,'_')[1],'-')[1])",
+													"type": "Expression"
+												},
+												"FILE_NAME": {
+													"value": "@concat(split(item().name,'.')[0],'.parquet')",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/CustomerJson')]",
+				"[concat(variables('factoryId'), '/datasets/Customer_Parquet_data')]"
+			]
 		}
 	]
 }
