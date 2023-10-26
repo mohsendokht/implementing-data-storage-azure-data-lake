@@ -53,76 +53,7 @@
 						"value": "@activity('GetCustJsonFiles').output.childItems",
 						"type": "Expression"
 					},
-					"isSequential": true,
-					"activities": [
-						{
-							"name": "Copy Files",
-							"type": "Copy",
-							"dependsOn": [],
-							"policy": {
-								"timeout": "0.12:00:00",
-								"retry": 0,
-								"retryIntervalInSeconds": 30,
-								"secureOutput": false,
-								"secureInput": false
-							},
-							"userProperties": [],
-							"typeProperties": {
-								"source": {
-									"type": "JsonSource",
-									"storeSettings": {
-										"type": "AzureBlobStorageReadSettings",
-										"recursive": true,
-										"wildcardFileName": {
-											"value": "@item().name",
-											"type": "Expression"
-										},
-										"enablePartitionDiscovery": false
-									},
-									"formatSettings": {
-										"type": "JsonReadSettings"
-									}
-								},
-								"sink": {
-									"type": "ParquetSink",
-									"storeSettings": {
-										"type": "AzureBlobFSWriteSettings"
-									},
-									"formatSettings": {
-										"type": "ParquetWriteSettings"
-									}
-								},
-								"enableStaging": false
-							},
-							"inputs": [
-								{
-									"referenceName": "CustomerJson",
-									"type": "DatasetReference",
-									"parameters": {
-										"FILE_NAME": "customer_2021-01-01.json",
-										"CONTAINER": "landingarea"
-									}
-								}
-							],
-							"outputs": [
-								{
-									"referenceName": "Customer_Parquet_data",
-									"type": "DatasetReference",
-									"parameters": {
-										"CONTAINER": "rawdatastroe",
-										"FILE_PATH": {
-											"value": "@concat(split(item().name,'_')[0],'/',split(split(item().name,'_')[1],'-')[0],'/',split(split(item().name,'_')[1],'-')[1])",
-											"type": "Expression"
-										},
-										"FILE_NAME": {
-											"value": "@concat(split(item().name,'.')[0],'.parquet')",
-											"type": "Expression"
-										}
-									}
-								}
-							]
-						}
-					]
+					"isSequential": true
 				}
 			}
 		],
