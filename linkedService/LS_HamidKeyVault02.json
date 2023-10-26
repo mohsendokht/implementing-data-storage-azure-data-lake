@@ -1,0 +1,11 @@
+{
+	"name": "LS_HamidKeyVault02",
+	"properties": {
+		"description": "HamidKeyVault02",
+		"annotations": [],
+		"type": "AzureKeyVault",
+		"typeProperties": {
+			"baseUrl": "https://HamidKeyVault02.vault.azure.net/"
+		}
+	}
+}
